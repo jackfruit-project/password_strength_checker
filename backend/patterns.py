@@ -34,3 +34,19 @@ def has_keyboard_pattern(password: str) -> bool: #checking for common patterns l
             return True
     return False
 
+def check_patterns(password: str) -> list:  #returning the list of all the characterestics of password based on above defined functions 
+                                            # eg. if a password is 'abc123qwerty', it satisfies all 3 of above functions hence the list would contain al 3 keywords.
+                                            # similarly, if password is something like 'abctesting' it would only return True for the has_sequence function.
+    patterns_found = []
+
+    if has_repetition(password):
+        patterns_found.append("repetition")
+
+    if has_sequence(password):
+        patterns_found.append("sequence")
+
+    if has_keyboard_pattern(password):
+        patterns_found.append("keyboard_pattern")
+
+    return patterns_found
+

@@ -1,9 +1,9 @@
 import os
 g = os.path.join(
-    os.path.dirname(__file__),    # location of the blacklist text file, currently not created so change the path as per the file name when downloaded
+    os.path.dirname(__file__),    # location of the blacklist text file 
     "..",                       
     "resources",                
-    "dontforgettochange.txt"   #change after downloading the textfile
+    "blacklist.txt"
 )
 
 # Store all blacklisted passwords here
