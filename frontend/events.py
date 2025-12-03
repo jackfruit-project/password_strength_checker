@@ -1,6 +1,7 @@
-def on_password_change(event, frame):
-    password = frame.password_box.GetValue()
-    score = frame.calculate_strength(password)  # your custom logic later
+from .ui import calculate_strength,MainFrame
+def on_password_change(self, frame):
+    password = self.password_box.GetValue()
+    score = self.calculate_strength(password)  # can calculate using custom logic later
 
     frame.strength_bar.SetValue(score)
 
@@ -10,3 +11,5 @@ def on_password_change(event, frame):
         frame.strength_label.SetLabel("Strength: Medium")
     else:
         frame.strength_label.SetLabel("Strength: Strong")
+
+#The functions calculate_strength, MainFrame are not getting imported check it once
