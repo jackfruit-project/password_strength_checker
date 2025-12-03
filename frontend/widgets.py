@@ -10,3 +10,4 @@ def create_strength_bar(panel):
 
 def create_strength_label(panel):
     return wx.StaticText(panel, label="Strength: ")
+# Functions not really required as we already created widgets manually in ui.py
