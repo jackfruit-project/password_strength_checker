@@ -2,26 +2,22 @@ import wx
 import sys
 import os
 
-# ============================================
-# IMPORT YOUR ACTUAL BACKEND
-# ============================================
-# Add backend directory to path
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
-backend_dir = os.path.join(parent_dir, 'backend')  # Backend is in a 'backend' folder
+backend_dir = os.path.join(parent_dir, 'backend') 
 
 print(f"Current directory: {current_dir}")
 print(f"Parent directory: {parent_dir}")
 print(f"Backend directory: {backend_dir}")
 
-# Check if backend directory exists
+
 if os.path.exists(backend_dir):
     print(f"✓ Found backend directory at: {backend_dir}")
     sys.path.insert(0, backend_dir)
 else:
     print(f"✗ Backend directory NOT FOUND at: {backend_dir}")
 
-# Import your actual backend functions
 try:
     from evaluator import evaluate_password
     print("✓ Successfully imported backend from evaluator.py")
@@ -37,11 +33,7 @@ except ImportError as e:
     )
     sys.exit(1)
 
-
-# ============================================
 # WXPYTHON FRONTEND
-# ============================================
-
 class PasswordCheckerFrame(wx.Frame):
     """Main application window for password strength checking"""
     
@@ -60,7 +52,7 @@ class PasswordCheckerFrame(wx.Frame):
     def init_ui(self):
         """Initialize the user interface"""
         panel = wx.Panel(self)
-        # Hacker theme - black background
+        # black background
         panel.SetBackgroundColour(wx.Colour(0, 0, 0))
         main_sizer = wx.BoxSizer(wx.VERTICAL)
         
@@ -98,7 +90,7 @@ class PasswordCheckerFrame(wx.Frame):
         self.password_input.SetForegroundColour(wx.Colour(0, 255, 0))  # Green text
         self.password_input.Bind(wx.EVT_TEXT, self.on_password_change)
         
-        # Show/Hide password toggle
+        # Show/Hide password toggle  - masking the password
         self.show_password_btn = wx.ToggleButton(panel, label='👁️ Show', size=(90, 35))
         self.show_password_btn.SetBackgroundColour(wx.Colour(0, 100, 0))
         self.show_password_btn.SetForegroundColour(wx.Colour(0, 255, 0))
@@ -260,10 +252,10 @@ class PasswordCheckerFrame(wx.Frame):
             )
             return
         
-        # Get evaluation from YOUR backend
+        # Get evaluation from the backend
         result = evaluate_password(password)
         
-        # Build detailed message
+        # Build detailed message / password analysis
         msg_parts = [
             "=" * 50,
             "PASSWORD STRENGTH ANALYSIS REPORT",
@@ -290,7 +282,7 @@ class PasswordCheckerFrame(wx.Frame):
             for pattern in result['patterns']:
                 msg_parts.append(f"    - {pattern}")
         
-        # Generate recommendations
+        # Generating recommendations to improve pass strength
         recommendations = self.generate_recommendations(result)
         if recommendations:
             msg_parts.append("\nRECOMMENDATIONS:")
@@ -301,7 +293,7 @@ class PasswordCheckerFrame(wx.Frame):
         
         msg = '\n'.join(msg_parts)
         
-        # Create a dialog for better text display
+        
         dlg = wx.MessageDialog(
             self,
             msg,
@@ -319,14 +311,14 @@ class PasswordCheckerFrame(wx.Frame):
     def update_strength_display(self, password):
         """Update all UI elements based on password strength"""
         try:
-            # Get evaluation from YOUR backend
+            # Get evaluation from backend
             result = evaluate_password(password)
             
             # Update gauge
             score = result['score']
             self.strength_gauge.SetValue(score)
             
-            # Update strength label with color
+            # Update strength label with color dynamically
             strength = result['strength']
             self.strength_label.SetLabel(strength)
             
@@ -351,7 +343,7 @@ class PasswordCheckerFrame(wx.Frame):
             # Update metrics
             self.length_label.SetLabel(f"{result['length']} characters")
             
-            # Entropy from YOUR backend
+            # Entropy from backend
             entropy = result['entropy']
             entropy_text = f"{entropy:.2f} bits"
             if entropy > 52:
@@ -478,9 +470,7 @@ class PasswordCheckerApp(wx.App):
         return True
 
 
-# ============================================
-# APPLICATION ENTRY POINT
-# ============================================
+#running the application
 if __name__ == '__main__':
     app = PasswordCheckerApp()
     app.MainLoop()
