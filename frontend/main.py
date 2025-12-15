@@ -1,4 +1,4 @@
-import wx 
+import wx
 import sys
 import os
 import re
@@ -171,27 +171,32 @@ class PasswordCheckerFrame(wx.Frame):
     def init_ui(self):
         """Initialize the user interface"""
         panel = wx.Panel(self)
-        panel.SetBackgroundColour(wx.Colour(245, 245, 245))
+        # Hacker theme - black background
+        panel.SetBackgroundColour(wx.Colour(0, 0, 0))
         main_sizer = wx.BoxSizer(wx.VERTICAL)
         
-        # Title
+        # Title - Matrix green
         title = wx.StaticText(panel, label='🔒 Password Strength Checker')
         title_font = wx.Font(22, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         title.SetFont(title_font)
+        title.SetForegroundColour(wx.Colour(0, 255, 0))  # Bright green
         main_sizer.Add(title, 0, wx.ALL | wx.CENTER, 20)
         
         # Subtitle
         subtitle = wx.StaticText(panel, label='Analyze your password security in real-time')
         subtitle_font = wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL)
         subtitle.SetFont(subtitle_font)
-        subtitle.SetForegroundColour(wx.Colour(100, 100, 100))
+        subtitle.SetForegroundColour(wx.Colour(0, 200, 0))  # Darker green
         main_sizer.Add(subtitle, 0, wx.ALL | wx.CENTER, 5)
         
-        # Separator
-        main_sizer.Add(wx.StaticLine(panel), 0, wx.EXPAND | wx.ALL, 10)
+        # Separator - green line
+        separator = wx.StaticLine(panel)
+        separator.SetBackgroundColour(wx.Colour(0, 255, 0))
+        main_sizer.Add(separator, 0, wx.EXPAND | wx.ALL, 10)
         
         # Password input section
         input_box = wx.StaticBox(panel, label='Enter Password')
+        input_box.SetForegroundColour(wx.Colour(0, 255, 0))
         input_sizer = wx.StaticBoxSizer(input_box, wx.VERTICAL)
         
         password_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -200,10 +205,14 @@ class PasswordCheckerFrame(wx.Frame):
             style=wx.TE_PASSWORD,
             size=(450, 35)
         )
+        self.password_input.SetBackgroundColour(wx.Colour(20, 20, 20))  # Dark gray
+        self.password_input.SetForegroundColour(wx.Colour(0, 255, 0))  # Green text
         self.password_input.Bind(wx.EVT_TEXT, self.on_password_change)
         
         # Show/Hide password toggle
         self.show_password_btn = wx.ToggleButton(panel, label='👁️ Show', size=(90, 35))
+        self.show_password_btn.SetBackgroundColour(wx.Colour(0, 100, 0))
+        self.show_password_btn.SetForegroundColour(wx.Colour(0, 255, 0))
         self.show_password_btn.Bind(wx.EVT_TOGGLEBUTTON, self.toggle_password_visibility)
         
         password_sizer.Add(self.password_input, 1, wx.ALL | wx.EXPAND, 5)
@@ -214,6 +223,7 @@ class PasswordCheckerFrame(wx.Frame):
         
         # Strength indicator section
         strength_box = wx.StaticBox(panel, label='Password Strength')
+        strength_box.SetForegroundColour(wx.Colour(0, 255, 0))
         strength_sizer = wx.StaticBoxSizer(strength_box, wx.VERTICAL)
         
         # Progress bar
@@ -226,10 +236,12 @@ class PasswordCheckerFrame(wx.Frame):
         self.strength_label = wx.StaticText(panel, label='Not evaluated')
         strength_label_font = wx.Font(16, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         self.strength_label.SetFont(strength_label_font)
+        self.strength_label.SetForegroundColour(wx.Colour(0, 200, 0))
         
         self.score_label = wx.StaticText(panel, label='Score: 0/100')
         score_font = wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         self.score_label.SetFont(score_font)
+        self.score_label.SetForegroundColour(wx.Colour(0, 200, 0))
         
         strength_label_sizer.Add(self.strength_label, 1, wx.ALL, 5)
         strength_label_sizer.Add(self.score_label, 0, wx.ALL, 5)
@@ -239,6 +251,7 @@ class PasswordCheckerFrame(wx.Frame):
         
         # Character requirements checklist
         requirements_box = wx.StaticBox(panel, label='Character Requirements')
+        requirements_box.SetForegroundColour(wx.Colour(0, 255, 0))
         requirements_sizer = wx.StaticBoxSizer(requirements_box, wx.VERTICAL)
         
         self.requirement_checks = {}
@@ -251,6 +264,7 @@ class PasswordCheckerFrame(wx.Frame):
         
         for key, label in requirements:
             cb = wx.CheckBox(panel, label=label)
+            cb.SetForegroundColour(wx.Colour(0, 255, 0))
             cb.Enable(False)  # Make read-only
             self.requirement_checks[key] = cb
             requirements_sizer.Add(cb, 0, wx.ALL, 5)
@@ -259,29 +273,42 @@ class PasswordCheckerFrame(wx.Frame):
         
         # Security metrics section
         metrics_box = wx.StaticBox(panel, label='Security Analysis')
+        metrics_box.SetForegroundColour(wx.Colour(0, 255, 0))
         metrics_sizer = wx.StaticBoxSizer(metrics_box, wx.VERTICAL)
         
         metrics_grid = wx.FlexGridSizer(rows=4, cols=2, hgap=15, vgap=8)
         metrics_grid.AddGrowableCol(1, 1)
         
         # Length
-        metrics_grid.Add(wx.StaticText(panel, label='Password Length:'), 0, wx.ALIGN_CENTER_VERTICAL)
+        length_text = wx.StaticText(panel, label='Password Length:')
+        length_text.SetForegroundColour(wx.Colour(0, 255, 0))
+        metrics_grid.Add(length_text, 0, wx.ALIGN_CENTER_VERTICAL)
         self.length_label = wx.StaticText(panel, label='0 characters')
+        self.length_label.SetForegroundColour(wx.Colour(0, 200, 0))
         metrics_grid.Add(self.length_label, 0, wx.ALIGN_CENTER_VERTICAL)
         
         # Entropy
-        metrics_grid.Add(wx.StaticText(panel, label='Shannon Entropy:'), 0, wx.ALIGN_CENTER_VERTICAL)
+        entropy_text = wx.StaticText(panel, label='Shannon Entropy:')
+        entropy_text.SetForegroundColour(wx.Colour(0, 255, 0))
+        metrics_grid.Add(entropy_text, 0, wx.ALIGN_CENTER_VERTICAL)
         self.entropy_label = wx.StaticText(panel, label='N/A')
+        self.entropy_label.SetForegroundColour(wx.Colour(0, 200, 0))
         metrics_grid.Add(self.entropy_label, 0, wx.ALIGN_CENTER_VERTICAL)
         
         # Pattern check
-        metrics_grid.Add(wx.StaticText(panel, label='Patterns Detected:'), 0, wx.ALIGN_CENTER_VERTICAL)
+        patterns_text = wx.StaticText(panel, label='Patterns Detected:')
+        patterns_text.SetForegroundColour(wx.Colour(0, 255, 0))
+        metrics_grid.Add(patterns_text, 0, wx.ALIGN_CENTER_VERTICAL)
         self.patterns_label = wx.StaticText(panel, label='N/A')
+        self.patterns_label.SetForegroundColour(wx.Colour(0, 200, 0))
         metrics_grid.Add(self.patterns_label, 0, wx.ALIGN_CENTER_VERTICAL)
         
         # Common password check
-        metrics_grid.Add(wx.StaticText(panel, label='Common Password:'), 0, wx.ALIGN_CENTER_VERTICAL)
+        common_text = wx.StaticText(panel, label='Common Password:')
+        common_text.SetForegroundColour(wx.Colour(0, 255, 0))
+        metrics_grid.Add(common_text, 0, wx.ALIGN_CENTER_VERTICAL)
         self.common_label = wx.StaticText(panel, label='N/A')
+        self.common_label.SetForegroundColour(wx.Colour(0, 200, 0))
         metrics_grid.Add(self.common_label, 0, wx.ALIGN_CENTER_VERTICAL)
         
         metrics_sizer.Add(metrics_grid, 0, wx.ALL | wx.EXPAND, 5)
@@ -289,6 +316,7 @@ class PasswordCheckerFrame(wx.Frame):
         
         # Feedback section
         feedback_box = wx.StaticBox(panel, label='Recommendations')
+        feedback_box.SetForegroundColour(wx.Colour(0, 255, 0))
         feedback_sizer = wx.StaticBoxSizer(feedback_box, wx.VERTICAL)
         
         self.feedback_text = wx.TextCtrl(
@@ -296,7 +324,8 @@ class PasswordCheckerFrame(wx.Frame):
             style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_WORDWRAP,
             size=(-1, 100)
         )
-        self.feedback_text.SetBackgroundColour(wx.Colour(255, 255, 255))
+        self.feedback_text.SetBackgroundColour(wx.Colour(20, 20, 20))  # Dark gray
+        self.feedback_text.SetForegroundColour(wx.Colour(0, 255, 0))  # Green text
         self.feedback_text.SetValue('Enter a password to see security recommendations')
         feedback_sizer.Add(self.feedback_text, 1, wx.ALL | wx.EXPAND, 5)
         
@@ -306,9 +335,13 @@ class PasswordCheckerFrame(wx.Frame):
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
         
         analyze_btn = wx.Button(panel, label='🔍 Detailed Analysis', size=(150, 40))
+        analyze_btn.SetBackgroundColour(wx.Colour(0, 100, 0))
+        analyze_btn.SetForegroundColour(wx.Colour(0, 255, 0))
         analyze_btn.Bind(wx.EVT_BUTTON, self.on_analyze_button)
         
         clear_btn = wx.Button(panel, label='🗑️ Clear', size=(100, 40))
+        clear_btn.SetBackgroundColour(wx.Colour(0, 100, 0))
+        clear_btn.SetForegroundColour(wx.Colour(0, 255, 0))
         clear_btn.Bind(wx.EVT_BUTTON, self.on_clear_button)
         
         button_sizer.Add(analyze_btn, 0, wx.ALL, 5)
@@ -408,11 +441,11 @@ class PasswordCheckerFrame(wx.Frame):
             strength = result['strength']
             self.strength_label.SetLabel(strength)
             
-            # Color mapping based on strength
+            # Color mapping based on strength - hacker theme
             color_map = {
-                'Weak': wx.Colour(220, 53, 69),      # Red
-                'Medium': wx.Colour(255, 193, 7),    # Yellow
-                'Strong': wx.Colour(40, 167, 69)     # Green
+                'Weak': wx.Colour(255, 0, 0),        # Red for danger
+                'Medium': wx.Colour(255, 255, 0),    # Yellow for warning
+                'Strong': wx.Colour(0, 255, 0)       # Bright green for success
             }
             color = color_map.get(strength, wx.BLACK)
             self.strength_label.SetForegroundColour(color)
@@ -443,16 +476,16 @@ class PasswordCheckerFrame(wx.Frame):
             patterns_count = len(result['patterns'])
             if patterns_count > 0:
                 self.patterns_label.SetLabel(f'{patterns_count} pattern(s) ⚠️')
-                self.patterns_label.SetForegroundColour(wx.Colour(220, 53, 69))
+                self.patterns_label.SetForegroundColour(wx.Colour(255, 0, 0))  # Red
             else:
                 self.patterns_label.SetLabel('None ✓')
-                self.patterns_label.SetForegroundColour(wx.Colour(40, 167, 69))
+                self.patterns_label.SetForegroundColour(wx.Colour(0, 255, 0))  # Green
             
             # Common password check
             is_common = result['is_common']
             self.common_label.SetLabel('Yes ⚠️' if is_common else 'No ✓')
             self.common_label.SetForegroundColour(
-                wx.Colour(220, 53, 69) if is_common else wx.Colour(40, 167, 69)
+                wx.Colour(255, 0, 0) if is_common else wx.Colour(0, 255, 0)
             )
             
             # Update feedback with recommendations
@@ -511,7 +544,7 @@ class PasswordCheckerFrame(wx.Frame):
         """Reset all display elements to default state"""
         self.strength_gauge.SetValue(0)
         self.strength_label.SetLabel('Not evaluated')
-        self.strength_label.SetForegroundColour(wx.BLACK)
+        self.strength_label.SetForegroundColour(wx.Colour(0, 200, 0))  # Green
         self.score_label.SetLabel('Score: 0/100')
         
         # Reset checkboxes
@@ -522,9 +555,9 @@ class PasswordCheckerFrame(wx.Frame):
         self.length_label.SetLabel('0 characters')
         self.entropy_label.SetLabel('N/A')
         self.patterns_label.SetLabel('N/A')
-        self.patterns_label.SetForegroundColour(wx.BLACK)
+        self.patterns_label.SetForegroundColour(wx.Colour(0, 200, 0))
         self.common_label.SetLabel('N/A')
-        self.common_label.SetForegroundColour(wx.BLACK)
+        self.common_label.SetForegroundColour(wx.Colour(0, 200, 0))
         
         self.feedback_text.SetValue('Enter a password to see security recommendations')
         self.Layout()
