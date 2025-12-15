@@ -1,152 +1,41 @@
 import wx
 import sys
 import os
-import re
 
 # ============================================
-# BACKEND CODE (Embedded)
+# IMPORT YOUR ACTUAL BACKEND
 # ============================================
-# This includes your backend logic directly to avoid import issues
+# Add backend directory to path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+backend_dir = os.path.join(parent_dir, 'backend')  # Backend is in a 'backend' folder
 
-def check_patterns(password: str) -> list:
-    """Check for common patterns in password"""
-    patterns_found = []
-    
-    # Check for sequential numbers
-    if re.search(r'(012|123|234|345|456|567|678|789)', password):
-        patterns_found.append("Sequential numbers")
-    
-    # Check for sequential letters
-    if re.search(r'(abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)', password.lower()):
-        patterns_found.append("Sequential letters")
-    
-    # Check for repeated characters
-    if re.search(r'(.)\1{2,}', password):
-        patterns_found.append("Repeated characters")
-    
-    # Check for keyboard patterns
-    keyboard_patterns = ['qwerty', 'asdfgh', 'zxcvbn', '!@#$%^']
-    for pattern in keyboard_patterns:
-        if pattern in password.lower():
-            patterns_found.append("Keyboard pattern")
-            break
-    
-    return patterns_found
+print(f"Current directory: {current_dir}")
+print(f"Parent directory: {parent_dir}")
+print(f"Backend directory: {backend_dir}")
 
+# Check if backend directory exists
+if os.path.exists(backend_dir):
+    print(f"✓ Found backend directory at: {backend_dir}")
+    sys.path.insert(0, backend_dir)
+else:
+    print(f"✗ Backend directory NOT FOUND at: {backend_dir}")
 
-def shannon_entropy(password: str) -> float:
-    """Calculate Shannon entropy of password"""
-    if not password:
-        return 0.0
-    
-    # Count frequency of each character
-    freq = {}
-    for char in password:
-        freq[char] = freq.get(char, 0) + 1
-    
-    # Calculate entropy
-    length = len(password)
-    entropy = 0.0
-    for count in freq.values():
-        probability = count / length
-        if probability > 0:
-            entropy -= probability * (probability ** 0.5) * 10  # Simplified entropy calculation
-    
-    return entropy
-
-
-def is_common_password(password: str) -> bool:
-    """Check if password is in common password list"""
-    common_passwords = [
-        'password', '123456', '12345678', 'qwerty', 'abc123', 'monkey',
-        '1234567', 'letmein', 'trustno1', 'dragon', 'baseball', 'iloveyou',
-        'master', 'sunshine', 'ashley', 'bailey', 'passw0rd', 'shadow',
-        '123123', '654321', 'superman', 'qazwsx', 'michael', 'football',
-        'password1', 'admin', 'welcome', 'login', 'princess', 'starwars'
-    ]
-    return password.lower() in common_passwords
-
-
-def evaluate_password(password: str) -> dict:
-    """Main password evaluation function - YOUR BACKEND CODE"""
-    results = {}
-    
-    # Standard parameters
-    length = len(password)
-    results["password"] = password
-    results["length"] = length
-    
-    # More standard parameters
-    has_upper = any(c.isupper() for c in password)
-    has_lower = any(c.islower() for c in password)
-    has_digit = any(c.isdigit() for c in password)
-    has_symbol = any(not c.isalnum() for c in password)
-    
-    results["has_upper"] = has_upper
-    results["has_lower"] = has_lower
-    results["has_digit"] = has_digit
-    results["has_symbol"] = has_symbol
-    
-    # Blacklist check
-    is_common = is_common_password(password)
-    results["is_common"] = is_common
-    
-    # Pattern detection check
-    patterns_detected = check_patterns(password)
-    results["patterns"] = patterns_detected
-    
-    # Entropy calculation
-    entropy_value = shannon_entropy(password)
-    results["entropy"] = entropy_value
-    
-    # Scoring the password on above characteristics
-    score = 0
-    
-    # Length score
-    if length >= 11:
-        score += 30
-    elif length >= 7:
-        score += 20
-    else:
-        score += 5
-    
-    # Character variety score
-    if has_upper:
-        score += 15
-    if has_lower:
-        score += 15
-    if has_digit:
-        score += 15
-    if has_symbol:
-        score += 15
-    
-    # Entropy score
-    if entropy_value > 60:
-        score += 20
-    elif entropy_value > 40:
-        score += 10
-    else:
-        score += 5
-    
-    # Penalties
-    if is_common:
-        score -= 40
-    if len(patterns_detected) > 0:
-        score -= 20
-    
-    # Keep score in range
-    score = max(0, min(score, 100))
-    results["score"] = score
-    
-    # Strength label
-    if score >= 80:
-        results["strength"] = "Strong"
-    elif score >= 50:
-        results["strength"] = "Medium"
-    else:
-        results["strength"] = "Weak"
-    
-    return results
+# Import your actual backend functions
+try:
+    from evaluator import evaluate_password
+    print("✓ Successfully imported backend from evaluator.py")
+except ImportError as e:
+    print(f"✗ Failed to import: {e}")
+    wx.MessageBox(
+        f"Cannot import backend!\n\n"
+        f"Backend dir: {backend_dir}\n\n"
+        f"Error: {e}\n\n"
+        f"Make sure evaluator.py is in the backend directory!",
+        "Import Error",
+        wx.OK | wx.ICON_ERROR
+    )
+    sys.exit(1)
 
 
 # ============================================
@@ -371,7 +260,7 @@ class PasswordCheckerFrame(wx.Frame):
             )
             return
         
-        # Get evaluation from backend
+        # Get evaluation from YOUR backend
         result = evaluate_password(password)
         
         # Build detailed message
@@ -430,7 +319,7 @@ class PasswordCheckerFrame(wx.Frame):
     def update_strength_display(self, password):
         """Update all UI elements based on password strength"""
         try:
-            # Get evaluation from backend
+            # Get evaluation from YOUR backend
             result = evaluate_password(password)
             
             # Update gauge
@@ -447,7 +336,7 @@ class PasswordCheckerFrame(wx.Frame):
                 'Medium': wx.Colour(255, 255, 0),    # Yellow for warning
                 'Strong': wx.Colour(0, 255, 0)       # Bright green for success
             }
-            color = color_map.get(strength, wx.BLACK)
+            color = color_map.get(strength, wx.Colour(0, 200, 0))
             self.strength_label.SetForegroundColour(color)
             
             # Update score label
@@ -462,6 +351,7 @@ class PasswordCheckerFrame(wx.Frame):
             # Update metrics
             self.length_label.SetLabel(f"{result['length']} characters")
             
+            # Entropy from YOUR backend
             entropy = result['entropy']
             entropy_text = f"{entropy:.2f} bits"
             if entropy > 60:
