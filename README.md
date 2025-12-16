@@ -1,10 +1,10 @@
-# 🔒 Password Strength Checker
+#  Password Strength Checker
 
 A powerful password security analysis tool with a sleek Matrix-themed GUI built using wxPython. Evaluates password strength using advanced algorithms including Shannon entropy, pattern detection, and common password checking.
 
 
 
-## ✨ Features
+## Features
 
 - **Real-time Password Analysis** - Instant feedback as you type
 - **Shannon Entropy Calculation** - Measures password randomness
@@ -15,7 +15,7 @@ A powerful password security analysis tool with a sleek Matrix-themed GUI built 
 - **Matrix-Themed UI** - Hacker-style black and green interface
 - **Detailed Reports** - Export comprehensive security analysis
 
-## 📸 Screenshots
+## Screenshots
 ## add later 
 
 ## Installation
@@ -70,7 +70,7 @@ password_strength_checker/
 └── README.md             # Project documentation
 ```
 
-## 🎯 How It Works
+##  How It Works
 
 ### Password Scoring System
 
@@ -102,7 +102,7 @@ The password is evaluated based on multiple criteria:
 - **Medium** (50-79): Acceptable but could be improved
 - **Weak** (0-49): Vulnerable, needs significant improvement
 
-## 🔍 Backend Modules
+##  Backend Modules
 
 ### `evaluator.py`
 Main evaluation engine that coordinates all security checks and calculates the final score.
@@ -123,7 +123,7 @@ Detects common patterns including:
 ### `blacklist.py`
 Maintains a database of commonly used weak passwords.
 
-## 🎨 UI Features
+##  UI Features
 
 - **Real-time Feedback**: Updates as you type
 - **Visual Progress Bar**: Color-coded strength indicator
@@ -133,7 +133,7 @@ Maintains a database of commonly used weak passwords.
 - **Detailed Analysis Button**: Comprehensive report popup
 - **UI**: Matrix-inspired green-on-black design
 
-## 🧪 Testing
+##  Testing
 
 Run backend tests:
 
@@ -142,7 +142,7 @@ cd backend
 python test_eval.py
 ```
 
-## 📊 Example Usage
+##  Example Usage
 
 ```python
 from backend.evaluator import evaluate_password
@@ -155,7 +155,7 @@ print(f"Entropy: {result['entropy']:.2f} bits")
 print(f"Patterns: {result['patterns']}")
 ```
 
-## 🛡️ Security Best Practices
+##  Security Best Practices
 
 Based on our analysis, strong passwords should:
 
@@ -184,13 +184,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - **Jackfruit Project Team** - [GitHub](https://github.com/jackfruit-project)
 
-## 🙏 Acknowledgments
-
-- wxPython for the GUI framework
-- Claude AI for development assistance
-- Open-source security research community
-
-## 📞 Contact
+## Contact
 
 For questions or support, please open an issue on GitHub.
 
