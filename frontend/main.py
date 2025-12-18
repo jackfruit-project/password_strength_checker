@@ -80,7 +80,8 @@ class PasswordCheckerFrame(wx.Frame):
         input_box.SetForegroundColour(wx.Colour(0, 255, 0))
         input_sizer = wx.StaticBoxSizer(input_box, wx.VERTICAL)
         
-        password_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.password_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.password_panel = panel  # Store panel reference
         self.password_input = wx.TextCtrl(
             panel,
             style=wx.TE_PASSWORD,
@@ -96,9 +97,9 @@ class PasswordCheckerFrame(wx.Frame):
         self.show_password_btn.SetForegroundColour(wx.Colour(0, 255, 0))
         self.show_password_btn.Bind(wx.EVT_TOGGLEBUTTON, self.toggle_password_visibility)
         
-        password_sizer.Add(self.password_input, 1, wx.ALL | wx.EXPAND, 5)
-        password_sizer.Add(self.show_password_btn, 0, wx.ALL, 5)
-        input_sizer.Add(password_sizer, 0, wx.EXPAND)
+        self.password_sizer.Add(self.password_input, 1, wx.ALL | wx.EXPAND, 5)
+        self.password_sizer.Add(self.show_password_btn, 0, wx.ALL, 5)
+        input_sizer.Add(self.password_sizer, 0, wx.EXPAND)
         
         main_sizer.Add(input_sizer, 0, wx.ALL | wx.EXPAND, 10)
         
@@ -446,49 +447,47 @@ class PasswordCheckerFrame(wx.Frame):
     
     def toggle_password_visibility(self, event):
         """Toggle password visibility"""
+        # Save current state before destroying
         password = self.password_input.GetValue()
         pos = self.password_input.GetInsertionPoint()
+        parent = self.password_input.GetParent()
+        
+        # Remove old text control from sizer and destroy it
+        self.password_sizer.Detach(0)
+        self.password_input.Destroy()
         
         if self.show_password_btn.GetValue():
-            # Show password - recreate without TE_PASSWORD
-            self.password_input.Destroy()
+            # Show password - create without TE_PASSWORD
             self.password_input = wx.TextCtrl(
-                self.password_input.GetParent(),
+                parent,
                 value=password,
                 size=(450, 35)
             )
-            self.password_input.SetBackgroundColour(wx.Colour(20, 20, 20))
-            self.password_input.SetForegroundColour(wx.Colour(0, 255, 0))
-            self.password_input.Bind(wx.EVT_TEXT, self.on_password_change)
             self.show_password_btn.SetLabel('👁️ Hide')
         else:
-            # Hide password - recreate with TE_PASSWORD
-            self.password_input.Destroy()
+            # Hide password - create with TE_PASSWORD
             self.password_input = wx.TextCtrl(
-                self.password_input.GetParent(),
+                parent,
                 value=password,
                 style=wx.TE_PASSWORD,
                 size=(450, 35)
             )
-            self.password_input.SetBackgroundColour(wx.Colour(20, 20, 20))
-            self.password_input.SetForegroundColour(wx.Colour(0, 255, 0))
-            self.password_input.Bind(wx.EVT_TEXT, self.on_password_change)
             self.show_password_btn.SetLabel('👁️ Show')
         
-        # Re-insert into sizer
-        parent_sizer = self.password_input.GetParent().GetSizer()
-        for sizer_item in parent_sizer.GetChildren():
-            if isinstance(sizer_item.GetSizer(), wx.StaticBoxSizer):
-                box_sizer = sizer_item.GetSizer()
-                for child in box_sizer.GetChildren():
-                    if isinstance(child.GetSizer(), wx.BoxSizer):
-                        password_sizer = child.GetSizer()
-                        password_sizer.Insert(0, self.password_input, 1, wx.ALL | wx.EXPAND, 5)
-                        break
-                break
+        # Set colors and bind event
+        self.password_input.SetBackgroundColour(wx.Colour(20, 20, 20))
+        self.password_input.SetForegroundColour(wx.Colour(0, 255, 0))
+        self.password_input.Bind(wx.EVT_TEXT, self.on_password_change)
         
+        # Add new text control to sizer
+        self.password_sizer.Insert(0, self.password_input, 1, wx.ALL | wx.EXPAND, 5)
+        
+        # Restore cursor position and focus
         self.password_input.SetInsertionPoint(pos)
         self.password_input.SetFocus()
+        
+        # Refresh layout
+        self.password_sizer.Layout()
         self.Layout()
 
 
